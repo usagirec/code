@@ -1,0 +1,37 @@
+import numpy as np
+
+class LRNumpy:
+    def __init__(self,lr,l2,epochs):
+        self.lr=lr
+        self.l2=l2
+        self.epochs=epochs
+
+    def _sigmoid(self,z):
+        return 1.0/(1.0+np.exp(-z))
+    
+    def fit(self,x,y):
+        n,d = x.shape
+        self.w = np.zeros(d)
+        self.b = 0.0
+        for i in range(self.epochs):
+            z = x@self.w+self.b
+            p = self._sigmoid(z)
+            diff = p-y
+            loss = self._loss(y,p)
+            dw = (x.T@diff)/n + self.l2*self.w
+            db = np.mean(diff)
+            self.w-=self.lr*self.dw
+            self.b-=self.lr*self.db
+
+    def _loss(self,y,p):
+        eps = 1e-12
+        p = np.clip(p,eps,1-eps)
+        bce = -np.mean(y*np.log(p)+(1-y)*np.log(1-p))
+        reg = 0.5*self.l2*np.sum(self.w**2)
+        return bce+reg
+      
+    def predict_pro(self,x):
+        return self._sigmoid(x@self.w+self.b)
+    
+    def predict(self,x):
+        return (self.predict_pro(x)>=0.5).astype(int)

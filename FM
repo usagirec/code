@@ -1,0 +1,17 @@
+import torch
+import torch.nn as nn
+
+class FM(nn.Module):
+    def _init_(self,n,k):
+        super()._init_()
+        self.n = n
+        self.k = k
+
+        self.Linear = nn.Linear(n,1)
+        self.v = nn.Parameter(torch.randn(n,k))
+
+    def forward(self,x):
+        square_sum = torch.sum((x@self.v).pow(2),dim=1)         #sum(x^2*V^2)
+        sum_square = torch.sum(x.pow(2)@self.v.pow(2),dim=1)    #sum(||v||*x^2)
+        output = self.Linear(x).squeeze(-1) + 0.5*(square_sum - sum_square)
+        return output

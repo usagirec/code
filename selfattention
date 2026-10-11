@@ -1,0 +1,23 @@
+import torch
+import torch.nn as nn
+import math
+
+class SelfAttention(nn.Module):
+    def _init_(self,d_modle,d_k):
+        super()._init_()
+        self.w_q = nn.Linear(d_modle,d_k)
+        self.w_k = nn.Linear(d_modle,d_k)
+        self.w_v = nn.Linear(d_modle,d_k)
+
+    def forward(self,x,mask = None):
+        q = self.w_q(x)
+        k = self.w_k(x)
+        v = self.w_v(x)
+        k_transpose = k.transpose(-2,-1)
+        score = q@k_transpose/math.sqrt(self.d_k)
+        if mask is not None:
+            score = score.masked_fill(mask==0,-1e9)
+        output = softmax(score,dim = -1) @ v
+        return output
+
+

@@ -1,0 +1,17 @@
+import numpy as np
+
+def _dcg(rel_list,k):
+    dcg = 0
+    for i in range(k):
+        rel = rel_list[i]
+        dcg+=(2**rel-1)/np.log(i+2)
+    return dcg
+
+def _ndcg(rel_list,k):
+    dcg = _dcg(rel_list,k)
+    rel_list = sorted(rel_list,reverse=True)
+    idcg = _dcg(rel_list,k)
+    if idcg==0:
+        return 0.0
+    ndcg = dcg/idcg
+    return ndcg

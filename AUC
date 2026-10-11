@@ -1,0 +1,13 @@
+def AUC(y,p):
+    P = sum(y)
+    N = len(y)-P
+    if P==0 or N==0:
+        return 0.5
+    data = sorted(zip(p,y),key=lambda x:x[0])
+    store = 0                                  #正样本秩和
+    for rank,(p,y) in enumerate(data,1):
+        if p==1:
+            store+=rank
+    AUC = (store - (P*P+1)/2.0)/p*N
+    return AUC
+

@@ -1,0 +1,23 @@
+import torch
+import torch.nn as nn
+
+class FFN(nn.Module):
+    def _init_(self,d1,d2,dropout):
+        super()._init_()
+        self.d1 = d1
+        self.d2 = d2
+        self.fc1 = nn.Linear(d1,d2)
+        self.fc2 = nn.Linear(d2,d1)
+        self.act = nn.ReLU()
+        self.dropout = nn.Dropout(dropout)
+
+    def forward(self,x)
+        x = self.fc1(x)
+        x = self.act(x)
+        x = self.dropout(x)
+
+        x = self.fc2(x)
+        x = self.dropout(X)
+        return x
+
+        

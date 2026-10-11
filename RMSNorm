@@ -1,0 +1,15 @@
+import torch
+import torch.nn as nn
+import math
+
+class RMSNorm(nn.Module):
+    def _init_(self,eps,d)
+        super()._init_()
+        self.eps = eps
+        self.d = d
+
+        self.gamma = nn.Parameter(torch.ones(d))
+
+    def forward(self,x)
+        rms = torch.sqrt((x**2).mean(dim=-1,keepdim=True)+self.eps)
+        retun x/rms*self.gamma

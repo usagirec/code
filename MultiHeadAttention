@@ -1,0 +1,35 @@
+import torch
+import torch.nn as nn
+import math
+
+class MultiHeadAttention(nn.Module):
+    def _init_(self,d_modle,n_head,mask,dropout):
+        super()._init_()
+        assert d_modle % n_head ==0
+        self.d_modle  = d_modle
+        self.n_head = n_head
+        self.d_k = d_modle // n_head
+
+        self.w_q = nn.Linear(d_modle,d_modle)
+        self.w_k = nn.Linear(d_modle,d_modle)
+        self.w_v = nn.Linear(d_modle,d_modle)
+        self.dropout = nn.Dropout(dropout)
+        self.w_o = nn.Linear(d_modle,d_modle)
+
+    def forward(self,x,mask = None):
+        batch_size,seq,_ = x.shape
+
+        q = self.w_q(x)
+        k = self.w_k(x)
+        v = self.w_v(x)
+
+        q = q.view(batch_size,seq,self.n_head,self.d_k).transpose(1,2)
+        k = k.view(batch_size,seq,self.n_head,self.d_k).transpose(1,2)
+        v = v.view(batch_size,seq,self.n_head,self.d_k).transpose(1,2)
+
+        stores = q @ k.transpose(-2,-1) / math.sqrt(self.d_k)
+        if mask is not None:
+            stores = stores.masked_fill(mask==0,-1e9)
+        output = torch.softmax(stores,dim=-1) @ v
+        output = output.transpose(1,2).contiguous().view(batch_size,seq,d_modle)  #view要求内存连续
+        return self.w_o(output)
