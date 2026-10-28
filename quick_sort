@@ -1,0 +1,8 @@
+def quick_sort(arr):
+    n = len(arr)
+    if n<=1:
+        return arr
+    mid = n//2
+    left = [x for x in arr if x<=arr[mid]]
+    right = [x for x in arr if x>arr[mid]]
+    return quick_sort(left)+[arr[mid]]+quick_sort(right)
